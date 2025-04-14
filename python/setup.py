@@ -36,10 +36,10 @@ setup(
     url='http://www.class-code.net',
     cmdclass={'build_ext': build_ext},
     ext_modules=[Extension("classy", ["classy.pyx"],
-                           include_dirs=[nm.get_include(), "../include","/Users/rayson1/opt/anaconda3/envs/classpt/include"],
+                           include_dirs=[nm.get_include(), "../include","/Users/rayson1/opt/anaconda3/envs/classpt-mod/include"],
                            libraries=liblist,
                            library_dirs=["../", GCCPATH],
-                           extra_link_args=['/Users/rayson1/opt/anaconda3/envs/classpt/lib/libopenblas.dylib','-lgomp'],
+                           extra_link_args=['/Users/rayson1/opt/anaconda3/envs/classpt-mod/lib/libopenblas.dylib','-lgomp'],
                            )],
     #data_files=[('bbn', ['../bbn/sBBN.dat'])]
 )

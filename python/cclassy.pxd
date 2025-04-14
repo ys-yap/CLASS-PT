@@ -427,10 +427,10 @@ cdef extern from "class.h":
         double * pk12_4_b1b2_ortho, #93
         double * pk12_4_b2_ortho, #94
         double * pk12_4_b1bG2_ortho, #95
-        double * pk12_4_bG2_ortho #96
+        double * pk12_4_bG2_ortho, #96
         #GC: ORTHOGONAL -- finish
         #YS: Unequal time -- start
-        double * pk22_unequal #97
+        double * pk22_unequal, #97
         double * pk13_unequal #97
         #YS: Unequal time -- finish
         )
@@ -551,8 +551,10 @@ cdef extern from "class.h":
         double * output_tot_pk12_l_4_b1bG2_ortho,
         double * output_tot_pk12_l_4_bG2_ortho,
         #GC: ORTHOGONAL -- finish
+        #YS: Unequal time -- start
         double * output_tot_pk22_unequal,
-        double * output_tot_pk13_unequal,
+        double * output_tot_pk13_unequal
+        #YS: Unequal time -- finish
         )
 
 
