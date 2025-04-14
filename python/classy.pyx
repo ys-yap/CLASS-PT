@@ -20,7 +20,7 @@ from libc.string cimport *
 cimport cython
 
 ctypedef np.float_t DTYPE_t
-ctypedef np.int_t DTYPE_i
+ctypedef np.int32_t DTYPE_i
 
 # Import the .pxd containing definitions
 from cclassy cimport *
@@ -855,6 +855,10 @@ cdef class Class:
         cdef double pk12_4_b1bG2_ortho #94 -> 95
         cdef double pk12_4_bG2_ortho  #95 -> 96
         #GC: ORTHOGONAL -- finish
+        #YS: Unequal time -- start
+        cdef double pk22_unequal #96 -> 97
+        cdef double pk13_unequal #97 -> 98
+        #YS: Unequal time -- finish
         #GC -> end here...
         cdef double pk_velo
         cdef double pk_cross
@@ -993,6 +997,10 @@ cdef class Class:
         result.append(factor_fNL*(pk12_4_b1bG2_ortho - large_for_logs_fNL))
         result.append(factor_fNL*(pk12_4_bG2_ortho - large_for_logs_fNL))
         #GC: ORTHOGONAL -- finish
+        #YS: Unequal time -- start
+        result.append(pk22_unequal-large_for_logs_matter)
+        result.append(pk13_unequal-large_for_logs_matter)
+        #YS: Unequal time -- finish
         free(pk_ic)
 #        return pk
         return result
@@ -1041,14 +1049,14 @@ cdef class Class:
         """Fast function to get the non-linear power spectrum multipole components on a k array"""
         #cdef np.ndarray[DTYPE_t, ndim = 2] pk_mult = np.zeros((72,k_size),'float64')
         #GC: ORTHOGONAL -- start
-        cdef np.ndarray[DTYPE_t, ndim = 2] pk_mult = np.zeros((96,k_size),'float64')
+        cdef np.ndarray[DTYPE_t, ndim = 2] pk_mult = np.zeros((98,k_size),'float64')
         #GC: ORTHOGONAL -- finish
         cdef np.ndarray[DTYPE_t, ndim = 1] this_pk
         cdef int index_k, index_comb
 
         for index_k in xrange(k_size):
             this_pk = np.asarray(self.pk(k[index_k],z, no_wiggle=no_wiggle, alpha_rs=alpha_rs))
-            for index_comb in xrange(96): #GC: ORTHOGONAL...
+            for index_comb in xrange(98): #GC: ORTHOGONAL...
                 pk_mult[index_comb, index_k] = this_pk[index_comb]
 
         return pk_mult
@@ -1057,7 +1065,7 @@ cdef class Class:
         """Fast function to get the non-linear power spectrum components on a k and z array"""
         #cdef np.ndarray[DTYPE_t, ndim = 4] pk_mult = np.zeros((72,k_size,z_size,mu_size),'float64')
         #GC: ORTHOGONAL -- start
-        cdef np.ndarray[DTYPE_t, ndim = 4] pk_mult = np.zeros((96,k_size,z_size,mu_size),'float64')
+        cdef np.ndarray[DTYPE_t, ndim = 4] pk_mult = np.zeros((98,k_size,z_size,mu_size),'float64')
         #GC: ORTHOGONAL -- finish
         cdef np.ndarray[DTYPE_t, ndim = 1] this_pk
         cdef int index_k, index_z, index_mu, index_comb
@@ -1066,7 +1074,7 @@ cdef class Class:
             for index_z in xrange(z_size):
                 for index_mu in xrange(mu_size):
                     this_pk = np.asarray(self.pk(k[index_k,index_z,index_mu],z[index_z]))
-                    for index_comb in xrange(96): #GC: ORTHOGONAL...
+                    for index_comb in xrange(98): #GC: ORTHOGONAL...
                         pk_mult[index_comb, index_k, index_z, index_mu] = this_pk[index_comb]
 
         return pk_mult

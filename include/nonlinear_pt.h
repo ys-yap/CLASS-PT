@@ -568,6 +568,11 @@ double * ln_pk_0_b2;
 
     //GC: ORTHOGONAL -- finish
 
+    //YS: Unequal time -- start
+    double * ln_pk22_unequal;
+    double * ln_pk13_unequal;
+    //YS: Unequal time -- finish
+
 
     //GC!
 
@@ -805,6 +810,10 @@ extern "C" {
                           double *pk12_l_4_b1bG2_ortho,
                           double *pk12_l_4_bG2_ortho,
                           //GC: ORTHOGONAL -- finish
+                          //YS: Unequal time -- start
+                          double *pk22_unequal,
+                          double *pk13_unequal,
+                          //YS: Unequal time -- finish
                           //GC!
                           double *lnk_l,
                           double *lnpk_l,

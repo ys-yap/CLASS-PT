@@ -1038,8 +1038,12 @@ int spectra_pk_nl_bias_at_z_i(
                               double * output_tot_pk12_l_4_b1b2_ortho, //93
                               double * output_tot_pk12_l_4_b2_ortho, //94
                               double * output_tot_pk12_l_4_b1bG2_ortho, //95
-                              double * output_tot_pk12_l_4_bG2_ortho // 96: which is right, 72 + 24 (which is 3+9+12)...
+                              double * output_tot_pk12_l_4_bG2_ortho, // 96: which is right, 72 + 24 (which is 3+9+12)...
                                 //GC: ORTHOGONAL -- finish
+                              //YS: Unequal time -- start
+                              double * output_tot_pk22_unequal, //97
+                              double * output_tot_pk13_unequal //98
+                              //YS: Unequal time -- finish
                        ) {
     
     /** Summary: */
@@ -1204,6 +1208,13 @@ int spectra_pk_nl_bias_at_z_i(
 
             //GC: ORTHOGONAL -- finish
 
+            //YS: Unequal time -- start
+
+            output_tot_pk22_unequal[index_k] = pnlpt->ln_pk22_unequal[i_z*pnlpt->k_size+index_k];
+            output_tot_pk13_unequal[index_k] = pnlpt->ln_pk13_unequal[i_z*pnlpt->k_size+index_k];
+
+            //YS: Unequal time -- finish
+
 
             
         }
@@ -1353,6 +1364,13 @@ int spectra_pk_nl_bias_at_z_i(
 
             //GC: ORTHOGONAL -- finish
 
+            //YS: Unequal time -- start
+
+            output_tot_pk22_unequal[index_k] = exp(output_tot_pk22_unequal[index_k]);
+            output_tot_pk13_unequal[index_k] = exp(output_tot_pk13_unequal[index_k]);
+
+            //YS: Unequal time -- finish
+
             
 
         }
@@ -1497,8 +1515,12 @@ int spectra_pk_nl_at_k_and_z(
                              double * pk_tot_fNL_4_b1b2_ortho,
                              double * pk_tot_fNL_4_b2_ortho,
                              double * pk_tot_fNL_4_b1bG2_ortho,
-                             double * pk_tot_fNL_4_bG2_ortho
-                                //GC: ORTHOGONAL -- finish
+                             double * pk_tot_fNL_4_bG2_ortho,
+                             //GC: ORTHOGONAL -- finish
+                             //YS: Unequal time -- start
+                             double * pk_tot_22_unequal,
+                             double * pk_tot_13_unequal
+                             //YS: Unequal time -- finish
                              ) {
 
   /** Summary: */
@@ -1525,6 +1547,11 @@ int spectra_pk_nl_at_k_and_z(
     
     //int last_index_fNL_;
     int last_index_fNL;
+
+    //YS: Unequal time -- start
+    int last_index_unequal22;
+    int last_index_unequal13;
+    //YS: Unequal time -- finish
 
 
   double * spectrum_at_z = NULL;
@@ -1632,6 +1659,15 @@ int spectra_pk_nl_at_k_and_z(
     double * spline_4_b2bG2;
     double * spectrum_4_bG2bG2_at_z = NULL;
     double * spline_4_bG2bG2;
+    
+    //YS: Unequal time -- start
+
+    double * spectrum_pk22_unequal_at_z = NULL;
+    double * spline_pk22_unequal;
+    double * spectrum_pk13_unequal_at_z = NULL;
+    double * spline_pk13_unequal;
+    
+    //YS: Unequal time -- finish
     
     //GC!
     
@@ -2004,7 +2040,16 @@ int spectra_pk_nl_at_k_and_z(
                 pnlpt->ln_k_size*sizeof(double),
                 psp->error_message);
     
-    
+    //YS: Unequal time -- start
+
+    class_alloc(spectrum_pk22_unequal_at_z,
+                pnlpt->ln_k_size*sizeof(double),
+                psp->error_message);
+    class_alloc(spectrum_pk13_unequal_at_z,
+                pnlpt->ln_k_size*sizeof(double),
+                psp->error_message);
+
+    //YS: Unequal time -- finish
     //GC!
     
     class_alloc(spectrum_fNL_at_z,
@@ -2381,8 +2426,12 @@ for (i_z=0; i_z<pnlpt->z_pk_num; i_z++) {
                                             spectrum_fNL_4_b1b2_at_z_ortho,
                                             spectrum_fNL_4_b2_at_z_ortho,
                                             spectrum_fNL_4_b1bG2_at_z_ortho,
-                                            spectrum_fNL_4_bG2_at_z_ortho
+                                            spectrum_fNL_4_bG2_at_z_ortho,
                                             //GC: ORTHOGONAL -- finish
+                                            //YS: Unequal time -- start
+                                            spectrum_pk22_unequal_at_z,
+                                            spectrum_pk13_unequal_at_z
+                                            //YS: Unequal time -- finish
                                             ),
                psp->error_message,
                psp->error_message);
@@ -2577,7 +2626,16 @@ for (i_z=0; i_z<pnlpt->z_pk_num; i_z++) {
                 sizeof(double)*psp->ic_ic_size[index_md]*pnlpt->ln_k_size,
                 psp->error_message);
     
-    
+    //YS: Unequal time -- start
+
+    class_alloc(spline_pk22_unequal,
+                sizeof(double)*psp->ic_ic_size[index_md]*pnlpt->ln_k_size,
+                psp->error_message);
+    class_alloc(spline_pk13_unequal,
+                sizeof(double)*psp->ic_ic_size[index_md]*pnlpt->ln_k_size,
+                psp->error_message);
+ 
+    //YS: Unequal time -- finish
     //GC!
     
     
@@ -4040,7 +4098,61 @@ for (i_z=0; i_z<pnlpt->z_pk_num; i_z++) {
     free(spectrum_4_bG2bG2_at_z);
     free(spline_4_bG2bG2);
     
-    
+    //YS: Unequal time -- start
+
+    class_call(array_spline_table_lines(pnlpt->ln_k,
+                                        pnlpt->ln_k_size,
+                                        spectrum_pk22_unequal_at_z, //spectrum_at_z_...,
+                                        1,
+                                        spline_pk22_unequal, //spline_...,
+                                        _SPLINE_NATURAL_,
+                                        psp->error_message),
+                psp->error_message,
+                psp->error_message);
+
+    class_call(array_interpolate_spline(pnlpt->ln_k,
+                                        pnlpt->ln_k_size,
+                                        spectrum_pk22_unequal_at_z, //spectrum_at_z_...,
+                                        spline_pk22_unequal, //spline_...,
+                                        1,
+                                        log(k),
+                                        &last_index_unequal22,
+                                        pk_tot_22_unequal, //pk_tot_...,
+                                        1,
+                                        psp->error_message),
+               psp->error_message,
+               psp->error_message);
+    *pk_tot_22_unequal = exp(*pk_tot_22_unequal);
+    free(spectrum_pk22_unequal_at_z);
+    free(spline_pk22_unequal);  
+
+    class_call(array_spline_table_lines(pnlpt->ln_k,
+                                        pnlpt->ln_k_size,
+                                        spectrum_pk13_unequal_at_z, //spectrum_at_z_...,
+                                        1,
+                                        spline_pk13_unequal, //spline_...,
+                                        _SPLINE_NATURAL_,
+                                        psp->error_message),
+               psp->error_message,
+               psp->error_message);
+
+    class_call(array_interpolate_spline(pnlpt->ln_k,
+                                        pnlpt->ln_k_size,
+                                        spectrum_pk13_unequal_at_z, //spectrum_at_z_...,
+                                        spline_pk13_unequal, //spline_...,
+                                        1,
+                                        log(k),
+                                        &last_index_unequal13,
+                                        pk_tot_13_unequal, //pk_tot_...,
+                                        1,
+                                        psp->error_message),
+               psp->error_message,
+               psp->error_message);
+    *pk_tot_13_unequal = exp(*pk_tot_13_unequal);
+    free(spectrum_pk13_unequal_at_z);
+    free(spline_pk13_unequal);
+
+    //YS: Unequal time -- end
     /*()()()()()()()()()()()()()()()()()()()()()()()*/
     
     
@@ -6255,6 +6367,11 @@ int spectra_free(
 
             //GC: ORTHOGONAL -- finish
 
+            //YS: Unequal time -- start
+            free(psp->ln_pk22_unequal);
+            free(psp->ln_pk13_unequal);
+            //YS: Unequal time -- finish
+
             
             
 
@@ -6410,6 +6527,11 @@ int spectra_free(
 
 
               //GC: ORTHOGONAL -- finish
+
+              //YS: Unequal time -- start
+              free(psp->ddln_pk22_unequal);
+              free(psp->ddln_pk13_unequal);
+              //YS: Unequal time -- finish
 
 
               
@@ -8052,6 +8174,18 @@ int spectra_pk(
 
 
             //GC: ORTHOGONAL -- finish
+            
+            //YS: Unequal time -- start
+
+            class_alloc(psp->ln_pk22_unequal,
+                        sizeof(double)*psp->ln_tau_nl_size*psp->ln_k_size,
+                        psp->error_message);
+
+            class_alloc(psp->ln_pk13_unequal,
+                        sizeof(double)*psp->ln_tau_nl_size*psp->ln_k_size,
+                        psp->error_message);
+
+            //YS: Unequal time -- finish
 
             
 
@@ -8237,6 +8371,13 @@ int spectra_pk(
 
             //GC: ORTHOGONAL -- finish
 
+            //YS: Unequal time -- start
+
+            psp->ln_pk22_unequal = NULL;
+            psp->ln_pk13_unequal = NULL;
+
+            //YS: Unequal time -- finish
+
             
         }
     
@@ -8390,6 +8531,12 @@ int spectra_pk(
 
 
         //GC: ORTHOGONAL -- finish
+        //YS: Unequal time -- start
+
+        psp->ln_pk22_unequal = NULL;
+        psp->ln_pk13_unequal = NULL;
+
+        //YS: Unequal time -- finish
 
         
         
@@ -9065,6 +9212,30 @@ Old part -- end*/
         class_call(array_spline_table_lines(psp->ln_tau_nl,psp->ln_tau_nl_size,psp->ln_pk_4_bG2bG2,psp->ln_k_size,psp->ddln_pk_4_bG2bG2,_SPLINE_EST_DERIV_,psp->error_message),psp->error_message,psp->error_message);
         
         
+        //YS: Unequal time -- start
+        class_alloc(psp->ddln_pk22_unequal,sizeof(double)*psp->ln_tau_nl_size*psp->ln_k_size,psp->error_message);
+        class_call(array_spline_table_lines(psp->ln_tau_nl,
+                                            psp->ln_tau_nl_size,
+                                            psp->ln_pk22_unequal,
+                                            psp->ln_k_size,
+                                            psp->ddln_pk22_unequal,
+                                            _SPLINE_EST_DERIV_,
+                                            psp->error_message),
+                   psp->error_message,
+                   psp->error_message);
+        
+        class_alloc(psp->ddln_pk13_unequal,sizeof(double)*psp->ln_tau_nl_size*psp->ln_k_size,psp->error_message);
+        class_call(array_spline_table_lines(psp->ln_tau_nl,
+                                            psp->ln_tau_nl_size,
+                                            psp->ln_pk13_unequal,
+                                            psp->ln_k_size,
+                                            psp->ddln_pk13_unequal,
+                                            _SPLINE_EST_DERIV_,
+                                            psp->error_message),
+                   psp->error_message,
+                   psp->error_message);
+                   
+        //YS: Unequal time -- finish
         //GC!!!
         
         

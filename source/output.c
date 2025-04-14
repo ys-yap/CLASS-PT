@@ -1190,7 +1190,10 @@ int output_pk_nl_pt(
     //GC: ORTHOGONAL -- finish
 
 
-    
+    //YS: Unequal time -- start
+    double * pk_tot_22_unequal;
+    double * pk_tot_13_unequal;
+    //YS: Unequal time -- finish
     
     double * pk_ic=NULL;
     
@@ -1656,6 +1659,18 @@ int output_pk_nl_pt(
 
         //GC: ORTHOGONAL -- finish
 
+        //YS: Unequal time -- start
+        
+        class_alloc(pk_tot_22_unequal,
+                    pnlpt->ln_k_size*sizeof(double),
+                    pop->error_message);
+
+        class_alloc(pk_tot_13_unequal,
+                    pnlpt->ln_k_size*sizeof(double),
+                    pop->error_message);
+                    
+        //YS: Unequal time -- finish
+
 
 
         
@@ -1809,10 +1824,14 @@ int output_pk_nl_pt(
                                                          pk_tot_fNL_4_b1b2_ortho,
                                                          pk_tot_fNL_4_b2_ortho,
                                                          pk_tot_fNL_4_b1bG2_ortho,
-                                                         pk_tot_fNL_4_bG2_ortho
+                                                         pk_tot_fNL_4_bG2_ortho,
 
                                                          //GC: ORTHOGONAL -- finish
 
+                                                         //YS: Unequal time -- start
+                                                         pk_tot_22_unequal,
+                                                         pk_tot_13_unequal
+                                                         //YS: Unequal time -- finish
                                                          
                                                          ),
                        pop->error_message,
@@ -2285,6 +2304,11 @@ free(pk_tot_IFG2_2);
 
 
         //GC: ORTHOGONAL -- finish
+
+        //YS: Unequal time -- start
+        free(pk_tot_22_unequal);
+        free(pk_tot_13_unequal);
+        //YS: Unequal time -- finish
 
         
 

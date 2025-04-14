@@ -449,6 +449,13 @@ int nonlinear_pt_init(
 
     //GC: ORTHOGONAL -- finish
 
+    //YS: Unequal time -- start
+
+    double *pk22_unequal;
+    double *pk13_unequal;
+
+    //YS: Unequal time -- finish
+
     short print_warning = _FALSE_;
     //double * pvecback;
     int last_index;
@@ -678,6 +685,13 @@ int nonlinear_pt_init(
         class_alloc(pk_fNLG2_ortho, pnlpt->k_size * sizeof(double), pnlpt->error_message);
 
         //GC: ORTHOGONAL -- finish
+
+        //YS: Unequal time -- start
+
+        class_alloc(pk22_unequal, pnlpt->k_size * sizeof(double), pnlpt->error_message);
+        class_alloc(pk13_unequal, pnlpt->k_size * sizeof(double), pnlpt->error_message);
+
+        //YS: Unequal time -- finish
 
         //GC!
 
@@ -2832,6 +2846,13 @@ int nonlinear_pt_init(
 
         //GC: ORTHOGONAL -- finish
 
+        //YS: Unequal time -- start
+
+        class_alloc(pnlpt->ln_pk22_unequal, sizeof(double) * pnlpt->z_pk_num * pnlpt->k_size, pnlpt->error_message);
+        class_alloc(pnlpt->ln_pk13_unequal, sizeof(double) * pnlpt->z_pk_num * pnlpt->k_size, pnlpt->error_message);
+
+        //YS: Unequal time -- finish
+
         //GC!
         
         //GC - SWITCH -> here I keep... Everything that allocates stuff I keep...
@@ -3438,6 +3459,10 @@ int nonlinear_pt_init(
                                              pk12_l_4_b1bG2_ortho,
                                              pk12_l_4_bG2_ortho,
                                              //GC: ORTHOGONAL -- finish
+                                             //YS: Unequal time -- start
+                                             pk22_unequal,
+                                             pk13_unequal,
+                                             //YS: Unequal time -- finish
                                              lnk_l,
                                              ln_pk_l_at_z_req, //GC!!!
                                              ln_pPRIMk_l_req   //lnpPRIMk_l //GC!!!
@@ -3576,6 +3601,13 @@ int nonlinear_pt_init(
                     pnlpt->ln_pk_fNLG2_ortho[i_z * pnlpt->k_size + index_k] = log(pk_fNLG2_ortho[index_k]);
 
                     //GC: ORTHOGONAL -- finish
+
+                    //YS: unequal time -- start
+
+                    pnlpt->ln_pk22_unequal[i_z * pnlpt->k_size + index_k] = log(pk22_unequal[index_k]);
+                    pnlpt->ln_pk13_unequal[i_z * pnlpt->k_size + index_k] = log(pk13_unequal[index_k]);
+
+                    //YS: unequal time -- finish
 
                     //GC!
                 }
@@ -3911,6 +3943,13 @@ class_call(nonlinear_pt_pk_l(pba,ppt,ppm,pnlpt,index_tau,pk_l,lnk_l,lnpk_l,ddlnp
         free(pk_fNLG2_ortho);
 
         //GC: ORTHOGONAL -- finish
+        
+        //YS: unequal time -- start
+
+        free(pk22_unequal);
+        free(pk13_unequal);
+
+        //YS: unequal time -- finish
 
         free(pPRIMk_l);
         free(lnpPRIMk_l);
@@ -4367,6 +4406,13 @@ int nonlinear_pt_free(
             free(pnlpt->ln_pk_fNLG2_ortho);
 
             //GC: ORTHOGONAL -- finish
+
+            //YS: unequal time -- start
+
+            free(pnlpt->ln_pk22_unequal);
+            free(pnlpt->ln_pk13_unequal);
+
+            //YS: unequal time -- finish
 
             //GC!
 
@@ -5024,6 +5070,10 @@ int nonlinear_pt_loop(
     double *pk12_l_4_b1bG2_ortho,
     double *pk12_l_4_bG2_ortho,
     //GC: ORTHOGONAL -- finish
+    //YS: Unequal time -- start
+    double *pk22_unequal,
+    double *pk13_unequal,
+    //YS: Unequal time -- finish
     //GC!
     double *lnk_l,
     double *lnpk_l,
@@ -6065,6 +6115,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
 
     //  if (pnlpt->rsd == rsd_yes && pnlpt->rsd_only == rsd_only_no || pnlpt->rsd == rsd_no) {
 
+
+    //YS: main thing to change, find a way to output P13 and P22 separately, instead of grouping to P1loop.
     for (index_j = 0; index_j < Nmax; index_j++)
     {
         f13[index_j] = 0.;
@@ -6143,7 +6195,7 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
             
         //GC: ORTHOGONAL -- finish
     }
-    //} //End of RSD only condition
+    //} //End of RSD only condition (YS: What is this doing here......)
 
     for (index_j = 0; index_j < Nmax; index_j++)
     {
@@ -6162,6 +6214,14 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
 
     //GC: ORTHOGONAL -- finish
 
+    //YS: Unequal time --start
+    //YS: This prepares the second derivatives for spline interpolation 
+
+    double *ddpk22_unequal;
+    double *ddpk13_unequal;
+
+    //YS: Unequal time --finish
+
     double *ddpk_CTR;
     class_alloc(ddpk_CTR, sizeof(double) * Nmax, pnlpt->error_message);
     double *ddpk_Tree;
@@ -6176,6 +6236,30 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
                                           pnlpt->error_message),
                pnlpt->error_message,
                pnlpt->error_message);
+
+    //YS: Unequal time --start
+
+    class_call(array_spline_table_columns(kdisc,
+                                          Nmax,
+                                          P22,
+                                          1,
+                                          ddpk22_unequal,
+                                          _SPLINE_NATURAL_,
+                                          pnlpt->error_message),
+               pnlpt->error_message,
+               pnlpt->error_message);
+
+    class_call(array_spline_table_columns(kdisc,
+                                          Nmax,
+                                          P13,
+                                          1,
+                                          ddpk13_unequal,
+                                          _SPLINE_NATURAL_,
+                                          pnlpt->error_message),
+                pnlpt->error_message,
+                pnlpt->error_message);
+
+    //YS: Unequal time --finish
 
     
     //GC - SWITCH ~> put switch here... This indeed could be a problem. Now this function wants to eat P12_fNL. But this is utter garbage in general... How am I sure that it does not give segmentation faults? Will first do a run with matter only...
@@ -6238,6 +6322,13 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
 
     //GC: ORTHOGONAL -- finish
 
+    //YS: Unequal time --start
+
+    double pk22_unequal_out;
+    double pk13_unequal_out;
+    
+    //YS: Unequal time --finish
+
     double pk_CTR_out;
     double pk_Tree_out;
 
@@ -6245,6 +6336,13 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
     last_index2 = 0;
     int last_index3 = 0;
     int last_index4 = 0; //GC!
+
+    //YS: Unequal time --start
+
+    int last_index_unequal22 = 0;
+    int last_index_unequal13 = 0;
+
+    //YS: Unequal time --finish
 
     //GC: ORTHOGONAL -- start
 
@@ -6256,6 +6354,9 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
     //printf("[*][*][*][*][*][*][*][*][*][*][*][*][*]\n"); //GC!
     //printf("[*][*][*][*][*][*][*][*][*][*][*][*][*]\n"); //GC!
     //printf("\n"); //GC!
+
+    //YS: Here the spline interpolattion is done for all components, the &pointer stores the output
+    //YS: Why do we need different last_index
 
     for (index_k = 0; index_k < pnlpt->k_size; index_k++)
     {
@@ -6275,6 +6376,36 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
                                                 pnlpt->error_message),
                        pnlpt->error_message,
                        pnlpt->error_message);
+            
+            //YS: Unequal time --start
+
+            class_call(array_interpolate_spline(kdisc,
+                                                Nmax,
+                                                P22,
+                                                ddpk22_unequal,
+                                                1,
+                                                pnlpt->k[index_k],
+                                                &last_index_unequal22,
+                                                &pk22_unequal_out,
+                                                1,
+                                                pnlpt->error_message),
+                       pnlpt->error_message,
+                       pnlpt->error_message);
+
+            class_call(array_interpolate_spline(kdisc,
+                                                Nmax,
+                                                P13,
+                                                ddpk13_unequal,
+                                                1,
+                                                pnlpt->k[index_k],
+                                                &last_index_unequal13,
+                                                &pk13_unequal_out,
+                                                1,
+                                                pnlpt->error_message),
+                       pnlpt->error_message,
+                       pnlpt->error_message);
+                       
+            //YS: Unequal time --finish
 
             class_call(array_interpolate_spline(kdisc,
                                                 Nmax,
@@ -6334,6 +6465,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
                        pnlpt->error_message);
 
             pk_nl[index_k] = pk_nl_out + large_for_logs_matter; //GC -> because log can become negative...
+            pk22_unequal[index_k] = pk22_unequal_out + large_for_logs_matter; //YS: Unequal time
+            pk13_unequal[index_k] = pk13_unequal_out + large_for_logs_matter; //YS: Unequal time
             //pk_nl_fNL[index_k] = pk_nl_fNL_out + 5000.; //GC -> because log can become negative... WILL NEED TO CHECK NUMBERS, if 5000 is enough!!! Would something change if I had chosen 50000? Would it have caused errors?
             pk_nl_fNL[index_k] = pk_nl_fNL_out + large_for_logs_fNL; //+ 1.*epsilon_for_logs_fNL;
 
@@ -6356,13 +6489,23 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
             pk_Tree[index_k] = pk_Tree_out;
         }
 
+        //YS: I should change this too? the else below is for the case when k is outside kmin and kmax. I need to tell it what to output, else it would give nans...
+        //YS: There are two cases, <kmin is IR, >kmax is UV
+
         else
         {
             //pk_nl[index_k] = exp(lnpk_l[index_k]);
             if (pnlpt->k[index_k] < kmin)
             {
                 pk_nl[index_k] = large_for_logs_matter - 61. * exp(lnpk_l[index_k] + 2. * lnk_l[index_k]) * sigmav / 105.;
+                
+                //YS: Unequal time -- start
+
+                pk22_unequal[index_k] = large_for_logs_matter;
+                pk13_unequal[index_k] = large_for_logs_matter - 61. * exp(lnpk_l[index_k] + 2. * lnk_l[index_k]) * sigmav / 105.;
+                
                 //pk_nl_fNL[index_k] = 5000.;
+                
                 pk_nl_fNL[index_k] = large_for_logs_fNL + 1. * epsilon_for_logs_fNL; //GC!
 
                 //GC: ORTHOGONAL -- start
@@ -6374,6 +6517,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
             if (pnlpt->k[index_k] > kmax)
             {
                 pk_nl[index_k] = large_for_logs_matter;
+                pk22_unequal[index_k] = large_for_logs_matter; //YS: Unequal time
+                pk13_unequal[index_k] = large_for_logs_matter; //YS: Unequal time
                 //pk_nl_fNL[index_k] = 5000.;
                 pk_nl_fNL[index_k] = large_for_logs_fNL + 1. * epsilon_for_logs_fNL; //GC!
 
@@ -11749,6 +11894,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
     free(Pdisc);
     free(PPRIMdisc); //GC!
     free(ddpk_nl);
+    free(ddpk22_unequal); //YS: Unequal time
+    free(ddpk13_unequal); //YS: Unequal time
     free(ddpk_nl_fNL); //GC!
     //GC: ORTHOGONAL -- start
     free(ddpk_nl_fNL_ortho); //GC!

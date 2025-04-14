@@ -51,7 +51,7 @@ LDFLAG = -g -fPIC
 HYREC = hyrec
 
 #put your path to libopenblas.a here
-OPENBLAS = /Users/gcabass/anaconda3/envs/openblas_test/lib/libopenblas.dylib
+OPENBLAS = /Users/rayson1/opt/anaconda3/envs/classpt/lib/libopenblas.dylib
 
 ########################################################
 ###### IN PRINCIPLE THE REST SHOULD BE LEFT UNCHANGED ##

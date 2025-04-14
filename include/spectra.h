@@ -521,6 +521,15 @@ struct spectra {
 
     //GC: ORTHOGONAL -- finish
 
+    //YS: Unequal time -- finish
+
+    double * ln_pk22_unequal;
+    double * ddln_pk22_unequal;
+    double * ln_pk13_unequal;
+    double * ddln_pk13_unequal;
+
+    //YS: Unequal time -- finish
+
     
     
 
@@ -743,8 +752,12 @@ extern "C" {
                                   double * output_tot_pk12_l_4_b1b2_ortho, //93
                                   double * output_tot_pk12_l_4_b2_ortho, //94
                                   double * output_tot_pk12_l_4_b1bG2_ortho, //95
-                                  double * output_tot_pk12_l_4_bG2_ortho //96
+                                  double * output_tot_pk12_l_4_bG2_ortho, //96
                                     //GC: ORTHOGONAL -- finish
+                                  //YS: Unequal time -- start
+                                  double * output_tot_pk22_unequal, //97
+                                  double * output_tot_pk13_unequal //98
+                                  //YS: Unequal time -- finish
                                 );
 
   int spectra_pk_nl_at_k_and_z(
@@ -856,8 +869,12 @@ extern "C" {
                                double * pk_tot_fNL_4_b1b2_ortho,
                                double * pk_tot_fNL_4_b2_ortho,
                                double * pk_tot_fNL_4_b1bG2_ortho,
-                               double * pk_tot_fNL_4_bG2_ortho
+                               double * pk_tot_fNL_4_bG2_ortho,
                                 //GC: ORTHOGONAL -- finish
+                                //YS: Unequal time -- start
+                               double * pk_tot_22_unequal,
+                               double * pk_tot_13_unequal
+                               //YS: Unequal time -- finish
                                );
     
     int spectra_pk_nl_halofit_at_k_and_z(
