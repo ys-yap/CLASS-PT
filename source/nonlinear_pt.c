@@ -5821,6 +5821,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
         free(qint2);
         free(IntegrandBAO);
         free(IntegrandBAO2);
+        if (pnlpt->nonlinear_pt_verbose > 0)
+            printf("IR resummation done.\n");
         //  free(Pw);
         //  free(Pnw);
     } /* End of IR resummation conditional expression */
@@ -6117,6 +6119,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
 
 
     //YS: main thing to change, find a way to output P13 and P22 separately, instead of grouping to P1loop.
+    if (pnlpt->nonlinear_pt_verbose > 0)
+            printf("Starting Loop calculations...\n");
     for (index_j = 0; index_j < Nmax; index_j++)
     {
         f13[index_j] = 0.;
@@ -6201,6 +6205,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
     {
         P_CTR[index_j] = kdisc[index_j] * kdisc[index_j] * Pbin[index_j];
     }
+    if (pnlpt->nonlinear_pt_verbose > 0)
+            printf("Matter counterterms done...\n");
 
     double *ddpk_nl;
     class_alloc(ddpk_nl, sizeof(double) * Nmax, pnlpt->error_message);
@@ -6218,7 +6224,9 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
     //YS: This prepares the second derivatives for spline interpolation 
 
     double *ddpk22_unequal;
+    class_alloc(ddpk22_unequal, sizeof(double) * Nmax, pnlpt->error_message);
     double *ddpk13_unequal;
+    class_alloc(ddpk13_unequal, sizeof(double) * Nmax, pnlpt->error_message);
 
     //YS: Unequal time --finish
 
@@ -6313,6 +6321,9 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
                pnlpt->error_message,
                pnlpt->error_message);
 
+    if (pnlpt->nonlinear_pt_verbose > 0)
+            printf("Spline table columns done...\n");
+
     double pk_nl_out;
     double pk_nl_fNL_out; //GC!
 
@@ -6357,6 +6368,8 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
 
     //YS: Here the spline interpolattion is done for all components, the &pointer stores the output
     //YS: Why do we need different last_index
+    if (pnlpt->nonlinear_pt_verbose > 0)
+            printf("Starting Spline Interpolation...\n");
 
     for (index_k = 0; index_k < pnlpt->k_size; index_k++)
     {
