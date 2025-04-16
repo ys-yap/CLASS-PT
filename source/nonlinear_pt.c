@@ -3637,7 +3637,7 @@ int nonlinear_pt_init(
 
             last_index = 0;
             
-            double large_for_logs_matter = 5. * pow(10., 3.); //GC!
+            double large_for_logs_matter = 10. * pow(10., 3.); //GC! YS: Logs
 
             if (ppt->has_cls == _TRUE_ && pnlpt->fast_output == _TRUE_)
             {
@@ -6020,10 +6020,10 @@ class_alloc(pk_12,pnlpt->k_size * sizeof(double),pnlpt->error_message);*/
     double large_for_logs_fNL = 5. * pow(10., 4.); //GC!!!
     //GC: ORTHOGONAL -- finish
     
-    double large_for_logs_matter = 5. * pow(10., 3.); //GC!
+    double large_for_logs_matter = 10. * pow(10., 3.); //GC! YS: Logs
     
     double large_for_logs_big = 1000000.; //GC!
-    double large_for_logs_small = 10.; //GC!
+    double large_for_logs_small = 20.; //GC!
 
     double cutoff = 3. * pba->h; //GC -> what is this???
     double *P13;
